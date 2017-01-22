@@ -27,13 +27,13 @@ var client = clientBuilder
 client.getUsers({}, function(e, r, b) {
     console.log(b);
 });
-client.getUser({}, function(e, r, b) {
+client.getUser({placeholders: {id: 4}}, function(e, r, b) {
     console.log(b);
 });
 client.getUsers({}, function(e, r, b) {
     console.log(b);
 });
-client.getUser({}, function(e, r, b) {
+client.getUser({placeholders: {id: 1}}, function(e, r, b) {
     console.log(b);
 });
 
@@ -41,8 +41,7 @@ setInterval(function() {
     client.getUsers({}, function(e, r, b) {
         console.log(b);
     });
-    client.getUser({}, function(e, r, b) {
+    client.getUser({placeholders: {id: 2}}, function(e, r, b) {
         console.log(b);
     });
-
 }, 4000);

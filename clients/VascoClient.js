@@ -1,13 +1,14 @@
 "use strict";
 var _ = require("lodash");
 var request = require("request");
+var format = require('string-format');
 
 var loadBalancerStrategies = require("../loadbalancer/strategies");
 //var discoveryStrategies = require("../discovery/strategies");
 
 var defaults = {};
 var methodDefaults = {
-    resolve: {},
+    placeholders: {},
     queryParams: {},
     headers: {},
     body: undefined
@@ -17,12 +18,10 @@ function methodBuilder(methodOptions, config) {
     return function(optionOverrides, callback) {
         if (_.isFunction(optionOverrides)) {
             callback = optionOverrides;
-        } else {
-            //TODO: use overrides
         }
 
         config.serviceDiscovery.status.done(function() {
-            invokeEndpoint(config.retry, {}, methodOptions, config, function() {
+            invokeEndpoint(config.retry, {}, _.merge({}, optionOverrides, methodOptions), config, function() {
                 return callback(responseObject.error, responseObject.response, responseObject.body);
             });
         }, function(err) {
@@ -32,9 +31,7 @@ function methodBuilder(methodOptions, config) {
 }
 
 function invokeEndpoint(retryCount, responseObject, methodOptions, config, callback) {
-    // do while wont work in this case, needs a better handling, especially for async!
-    var testUrl = config.strategy.getNextNode().url + methodOptions.url;
-    console.log(testUrl);
+    var testUrl = format(config.strategy.getNextNode().url + methodOptions.url, methodOptions.placeholders);
     request({
         // url: config.strategy.getNextNode().url + methodOptions.url,
         url: testUrl,
