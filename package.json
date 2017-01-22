@@ -1,0 +1,25 @@
+{
+  "name": "vasco",
+  "version": "0.0.1",
+  "description": "Discovery aware rest client with client side load balancing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "service",
+    "discovery",
+    "load",
+    "balancer",
+    "rest",
+    "client"
+  ],
+  "author": "nikhilw",
+  "license": "MIT",
+  "dependencies": {
+    "consul": "^0.27.0",
+    "lodash": "^4.17.4",
+    "promise": "^7.1.1",
+    "request": "^2.79.0"
+  }
+}

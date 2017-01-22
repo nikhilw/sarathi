@@ -35,3 +35,17 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# Custom
+.classpath
+.project
+.settings
+.externalToolBuilders
+*.bkp
+*.bkp.*
+*_bkp.*
+target/
+.idea/
+*.iml
+.springBeans
+node_modules/
