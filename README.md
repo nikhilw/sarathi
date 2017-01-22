@@ -1,7 +1,8 @@
 # vasco
-Service discovery aware rest client with client side load balancing.
+Service discovery aware declarative rest client with client side load balancing.
+The client is modelled similar to Feign (spring-cloud-fiegn) and Ribbon (spring-cloud-ribbon) projects from Netflix for simiar purpose.
 
-### NOTE: This is still development but basic happy flow with least options is working; check: test/trial.js
+### NOTE: named as such or not, this software is still alpha!
 
 ### Sample usage:
 ```
