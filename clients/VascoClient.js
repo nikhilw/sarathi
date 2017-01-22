@@ -1,10 +1,9 @@
 "use strict";
 var _ = require("lodash");
-var consul = require('consul')();
 var request = require("request");
-var Promise = require('promise');
 
-var loadBalancerStrategies = require("../loadbalancer/strategies.js");
+var loadBalancerStrategies = require("../loadbalancer/strategies");
+//var discoveryStrategies = require("../discovery/strategies");
 
 var defaults = {};
 var methodDefaults = {
@@ -13,45 +12,6 @@ var methodDefaults = {
     headers: {},
     body: undefined
 };
-
-function discoverService(serviceId) {
-    var serviceDiscovery = {
-        nodes: [],
-        status: new Promise(
-            function(resolve, reject) {
-                consul.health.service({
-                    service: serviceId,
-                    passing: true
-                }, function(err, result) {
-                    if (err) {
-                        return reject(err);
-                    }
-
-                    // console.log(result);
-                    if (result.length) {
-                        _.forEach(result, function(serviceDetails) {
-                            //console.log(serviceDetails);
-                            serviceDiscovery.nodes.push({
-                                address: serviceDetails.Service.Address,
-                                port: serviceDetails.Service.Port,
-                                url: "http://" + serviceDetails.Service.Address + ":" + serviceDetails.Service.Port + "/"
-                            })
-                        });
-                        // console.log(serviceDiscovery.nodes);
-                        return resolve(serviceDiscovery.nodes);
-                    } else {
-                        return reject("no services found");
-                    }
-                });
-
-                // setTimeout(function() {
-                //     reject("timeout");
-                // }, 2000);
-            }
-        )
-    };
-    return serviceDiscovery;
-}
 
 function methodBuilder(methodOptions, config) {
     return function(optionOverrides, callback) {
@@ -109,7 +69,7 @@ function VascoClient(options) {
     var config = {};
     _.merge(config, defaults, options);
 
-    config.serviceDiscovery = discoverService(config.serviceId); //TODO: use a promise to block till first discovery.
+    config.serviceDiscovery = config.discoveryHandler.discoverService(config); //TODO: use a promise to block till first discovery.
     config.strategy = loadBalancerStrategies.getLoadBalancer(config);
     
     _.forEach(config.methods, function(methodOptions, methodName) {

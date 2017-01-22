@@ -29,9 +29,21 @@ function Random(options) {
     }
 }
 
+function DisabledLB(options) {
+    var nodes = options.serviceDiscovery.nodes;
+    
+    this.getNextNode = function() {
+        if (nodes.length) {
+            return nodes[0];
+        }
+        throw new Error("No nodes for service.");
+    }
+}
+
 var strategies = {
     "round-robin": RoundRobin,
-    "random": Random
+    "random": Random,
+    "disabled": DisabledLB
 }
 
 module.exports = {

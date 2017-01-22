@@ -1,6 +1,7 @@
 "use strict";
 var _ = require("lodash");
 var VascoClient = require("./VascoClient");
+var DiscoveryBuilder = require("../discovery/strategies").DiscoveryBuilder;
 
 var defaults = {
     serviceId: "test-service",
@@ -53,6 +54,11 @@ function VascoClientBuilder(options) {
         return this;
     }
 
+    function getDiscoveryBuilder(discoveryType) {
+        config.discovery = discoveryType || config.discovery;
+        return new DiscoveryBuilder(config, this);
+    }
+
     function build() {
         var client = new VascoClient(config);
         return client;
@@ -61,6 +67,12 @@ function VascoClientBuilder(options) {
     this.addMethod = addMethod;
     this.build = build;
     this.setConfig = setConfig;
+    this.setLoadBalanceStrategy = setLoadBalanceStrategy;
+    this.getDiscoveryBuilder = getDiscoveryBuilder;
+
+    this._setDiscoveryHandler = function(discoveryHandler) {
+        config.discoveryHandler = discoveryHandler;
+    }
 };
 
 module.exports = VascoClientBuilder;
