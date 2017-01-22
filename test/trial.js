@@ -6,16 +6,15 @@ var clientBuilder = new VascoClientBuilder();
 var client = clientBuilder
                 .setConfig({
                     serviceId: "test-service-1",
-                    retry: 3,
-                    strategy: "round-robin",
-                    discovery: "consul"
+                    retry: 3, // total invocations: 1 + 3
+                    strategy: "round-robin", // random, disabled (disable logic, use server side load balancing instead)
+                    discovery: "consul" //direct
                 })
-                .getDiscoveryBuilder("consul") //direct
-                    // .setClient(consulClient)
-                    .setClientConfig({})
-                    .setRefreshRate(3000) //ms 30000
+                .getDiscoveryBuilder("consul") //direct, overrides config.
+                    // .setClient(consulClient) // Set existing instance, if you have one.
+                    .setClientConfig({}) // pass config to create discovery client instance
+                    .setRefreshRate(3000) //ms
                     .build()
-                //.setDiscovery() // insert an instance of vasco-discoery
                 .addMethod("getUsers", "/users", function(e, r, b) {
                     console.log(b);
                 })
