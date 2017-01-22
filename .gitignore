@@ -47,5 +47,4 @@ jspm_packages
 target/
 .idea/
 *.iml
-.springBeans
 node_modules/
