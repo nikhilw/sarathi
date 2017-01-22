@@ -1,6 +1,6 @@
 {
   "name": "vasco",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Discovery aware rest client with client side load balancing",
   "main": "index.js",
   "scripts": {
