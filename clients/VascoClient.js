@@ -4,6 +4,8 @@ var consul = require('consul')();
 var request = require("request");
 var Promise = require('promise');
 
+var loadBalancerStrategies = require("../loadbalancer/strategies.js");
+
 var defaults = {};
 var methodDefaults = {
     resolve: {},
@@ -49,24 +51,6 @@ function discoverService(serviceId) {
         )
     };
     return serviceDiscovery;
-}
-
-function buildLBStrategy(strategy, serviceNodes) {
-    function Strategy() {
-        var nodes = serviceNodes;
-        var current = 0;
-        this.getNextNode = function() {
-            if (nodes.length) {
-                current++;
-                if (current >= nodes.length) {
-                    current = 0;
-                }
-                return nodes[current];
-            }
-        }
-    };
-
-    return new Strategy();
 }
 
 function methodBuilder(methodOptions, config) {
@@ -125,10 +109,8 @@ function VascoClient(options) {
     var config = {};
     _.merge(config, defaults, options);
 
-    var serviceDiscovery = discoverService(config.serviceId); //TODO: use a promise to block till first discovery.
-    config.serviceDiscovery = serviceDiscovery;
-    var strategy = buildLBStrategy(config.strategy, serviceDiscovery.nodes);
-    config.strategy = strategy;
+    config.serviceDiscovery = discoverService(config.serviceId); //TODO: use a promise to block till first discovery.
+    config.strategy = loadBalancerStrategies.getLoadBalancer(config);
     
     _.forEach(config.methods, function(methodOptions, methodName) {
         vascoClient[methodName] = methodBuilder(methodOptions, config);
