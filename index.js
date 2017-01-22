@@ -1,3 +1,3 @@
 "use strict";
-var VascoClientBuilder = require("./clients/VascoClientBuilder");
-module.exports = VascoClientBuilder;
+var SarathiClientBuilder = require("./clients/SarathiClientBuilder");
+module.exports = SarathiClientBuilder;

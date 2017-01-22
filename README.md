@@ -1,4 +1,4 @@
-# vasco
+# Sarathi
 Service discovery aware declarative rest client with client side load balancing.
 The client is modelled similar to Feign (spring-cloud-fiegn) and Ribbon (spring-cloud-ribbon) projects from Netflix for simiar purpose.
 
@@ -8,8 +8,8 @@ The client is modelled similar to Feign (spring-cloud-fiegn) and Ribbon (spring-
 ```
 "use strict";
 
-var VascoClientBuilder = require("../index.js");
-var clientBuilder = new VascoClientBuilder();
+var SarathiClientBuilder = require("../index.js");
+var clientBuilder = new SarathiClientBuilder();
 
 var client = clientBuilder
                 .setConfig({

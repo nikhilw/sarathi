@@ -61,8 +61,8 @@ function invokeEndpoint(retryCount, responseObject, methodOptions, config, callb
     });
 }
 
-function VascoClient(options) {
-    var vascoClient = this;
+function SarathiClient(options) {
+    var sarathiClient = this;
     var config = {};
     _.merge(config, defaults, options);
 
@@ -70,7 +70,7 @@ function VascoClient(options) {
     config.strategy = loadBalancerStrategies.getLoadBalancer(config);
     
     _.forEach(config.methods, function(methodOptions, methodName) {
-        vascoClient[methodName] = methodBuilder(methodOptions, config);
+        sarathiClient[methodName] = methodBuilder(methodOptions, config);
     });
 
     this.newDummyOptions = function() {
@@ -78,4 +78,4 @@ function VascoClient(options) {
     };
 };
 
-module.exports = VascoClient;
+module.exports = SarathiClient;

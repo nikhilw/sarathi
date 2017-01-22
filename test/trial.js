@@ -1,7 +1,7 @@
 "use strict";
 
-var VascoClientBuilder = require("../index.js");
-var clientBuilder = new VascoClientBuilder();
+var SarathiClientBuilder = require("../index.js");
+var clientBuilder = new SarathiClientBuilder();
 
 var client = clientBuilder
                 .setConfig({

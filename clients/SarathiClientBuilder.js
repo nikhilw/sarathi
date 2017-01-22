@@ -1,6 +1,6 @@
 "use strict";
 var _ = require("lodash");
-var VascoClient = require("./VascoClient");
+var SarathiClient = require("./SarathiClient");
 var DiscoveryBuilder = require("../discovery/strategies").DiscoveryBuilder;
 
 var defaults = {
@@ -29,7 +29,7 @@ var defaults = {
 };
     
 
-function VascoClientBuilder(options) {
+function SarathiClientBuilder(options) {
     var config = {};
     //_.merge(config, defaults, options);
 
@@ -60,7 +60,7 @@ function VascoClientBuilder(options) {
     }
 
     function build() {
-        var client = new VascoClient(config);
+        var client = new SarathiClient(config);
         return client;
     };
 
@@ -75,4 +75,4 @@ function VascoClientBuilder(options) {
     }
 };
 
-module.exports = VascoClientBuilder;
+module.exports = SarathiClientBuilder;
