@@ -1,6 +1,6 @@
 # Sarathi
 Service discovery aware declarative rest client with client side load balancing.
-The client is modelled similar to Feign (spring-cloud-fiegn) and Ribbon (spring-cloud-ribbon) projects from Netflix for simiar purpose.
+The client is modelled similar to Feign (spring-cloud-feign) and Ribbon (spring-cloud-ribbon) projects from Netflix for simiar purpose.
 
 ### NOTE: named as such or not, this software is still alpha!
 

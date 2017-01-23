@@ -1,19 +1,29 @@
 {
   "name": "sarathi",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Service discovery aware, declarative rest client with client side load balancing",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikhilw/sarathi.git"
+  },
   "keywords": [
     "service discovery",
     "load balancer",
     "rest client",
-    "microservice"
+    "microservice",
+    "feign",
+    "ribbon"
   ],
   "author": "nikhilw",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nikhilw/sarathi/issues"
+  },
+  "homepage": "https://github.com/nikhilw/sarathi#readme",
   "dependencies": {
     "consul": "~0.27.0",
     "lodash": "~4.17.4",
