@@ -1,13 +1,13 @@
 "use strict";
 
 var _ = require("lodash");
-var consul = require('consul');
-var Promise = require('promise');
+var consul = require("consul");
+var Promise = require("promise");
 
 var discoveries = {
     consul: ConsulClient,
-    direct: DirectClient 
-}
+    direct: DirectClient
+};
 
 function ConsulClient(discoveryConfig) {
     var instance = this;
@@ -55,11 +55,11 @@ function ConsulClient(discoveryConfig) {
         };
 
         return serviceDiscovery;
-    }
+    };
 }
 
 function DirectClient(discoveryConfig) {
-    var instance = this;
+    // var instance = this;
     this.discoverService = function() {
         var serviceDiscovery = {
             nodes: discoveryConfig.instances.slice(),
@@ -69,9 +69,9 @@ function DirectClient(discoveryConfig) {
                 }
             )
         };
-        
+
         return serviceDiscovery;
-    }    
+    };
 }
 
 function DiscoveryBuilder(config, wrapperRef) {
@@ -90,27 +90,27 @@ function DiscoveryBuilder(config, wrapperRef) {
 
     this.setClientConfig = function(clientConfig) {
         discoveryConfig.clientConfig = clientConfig;
-        return this;  
+        return this;
     };
 
     this.setRefreshRate = function(refreshRate) {
         discoveryConfig.refreshRate = refreshRate;
         return this;
-    }
+    };
 
     this.setServiceId = function(serviceId) {
-        //TODO: implement. make discoveryConfig a subset of config; rename it to globalConfig
-    }
+        // TODO: implement. make discoveryConfig a subset of config; rename it to globalConfig
+    };
 
     this.setDirectInstances = function(instances) {
         discoveryConfig.instances = instances;
         return this;
-    }
+    };
 
     this.build = function() {
         wrapperRef._setDiscoveryHandler(new DiscoveryHandlerBuilder(discoveryConfig));
         return wrapperRef;
-    }
+    };
 }
 
 module.exports = {

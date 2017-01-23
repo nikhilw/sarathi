@@ -27,20 +27,19 @@ var defaults = {
         // }
     }
 };
-    
 
 function SarathiClientBuilder(options) {
     var instance = this;
     if (!(this instanceof SarathiClientBuilder)) {
-        return new SarathiClientBuilder(opts);
+        return new SarathiClientBuilder(options);
     }
     var config = {};
 
     if (options) {
         instance.setConfig(options);
     }
-    
-    //_.merge(config, defaults, options);
+
+    // _.merge(config, defaults, options);
 
     function setConfig(options) {
         _.merge(config, defaults, options);
@@ -81,7 +80,7 @@ function SarathiClientBuilder(options) {
 
     this._setDiscoveryHandler = function(discoveryHandler) {
         config.discoveryHandler = discoveryHandler;
-    }
+    };
 };
 
 module.exports = SarathiClientBuilder;

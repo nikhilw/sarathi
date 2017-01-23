@@ -15,7 +15,7 @@ var client = clientBuilder.setConfig({
     .setRefreshRate(3000) // ms
     .build()
     .addMethod("getUsers", "/users")
-    .addMethod("getUser", { url: "/user/{id}", consumes: "application/json" })
+    .addMethod("getUser", { url: "/users/{id}", consumes: "application/json" })
     .build();
 
 client.getUsers({}, function(e, r, b) {
