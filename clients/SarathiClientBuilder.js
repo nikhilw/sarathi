@@ -30,7 +30,16 @@ var defaults = {
     
 
 function SarathiClientBuilder(options) {
+    var instance = this;
+    if (!(this instanceof SarathiClientBuilder)) {
+        return new SarathiClientBuilder(opts);
+    }
     var config = {};
+
+    if (options) {
+        instance.setConfig(options);
+    }
+    
     //_.merge(config, defaults, options);
 
     function setConfig(options) {

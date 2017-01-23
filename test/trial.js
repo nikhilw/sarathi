@@ -15,12 +15,8 @@ var client = clientBuilder
                     .setClientConfig({}) // pass config to create discovery client instance
                     .setRefreshRate(3000) //ms
                     .build()
-                .addMethod("getUsers", "/users", function(e, r, b) {
-                    console.log(b);
-                })
-                .addMethod("getUser", {url: "/user/{id}", consumes: "application/json"}, function(e, r, b) {
-                    console.log(b);
-                })
+                .addMethod("getUsers", "/users")
+                .addMethod("getUser", {url: "/user/{id}", consumes: "application/json"})
                 .build();
 
 client.getUsers({}, function(e, r, b) {
