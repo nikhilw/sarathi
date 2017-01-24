@@ -1,3 +1,4 @@
+// @flow
 "use strict";
 var _ = require("lodash");
 
@@ -5,8 +6,8 @@ function Strategy() {
     this.getNextNode = _.noop;
 };
 
-function RoundRobin(options) {
-    var nodes = options.serviceDiscovery.nodes;
+function RoundRobin(loadBalancer, serviceDiscovery) {
+    var nodes = serviceDiscovery.nodes;
     var current = 0;
 
     this.getNextNode = function() {
@@ -17,8 +18,8 @@ function RoundRobin(options) {
     };
 }
 
-function Random(options) {
-    var nodes = options.serviceDiscovery.nodes;
+function Random(loadBalancer, serviceDiscovery) {
+    var nodes = serviceDiscovery.nodes;
 
     this.getNextNode = function() {
         if (nodes.length) {
@@ -28,8 +29,8 @@ function Random(options) {
     };
 }
 
-function DisabledLB(options) {
-    var nodes = options.serviceDiscovery.nodes;
+function DisabledLB(loadBalancer, serviceDiscovery) {
+    var nodes = serviceDiscovery.nodes;
 
     this.getNextNode = function() {
         if (nodes.length) {
@@ -39,19 +40,19 @@ function DisabledLB(options) {
     };
 }
 
-var strategies = {
+var loadBalanceStrategies = {
     "round-robin": RoundRobin,
     "random": Random,
     "disabled": DisabledLB
 };
 
 module.exports = {
-    getLoadBalancer: function(config) {
-        var StrategyHandler = strategies[config.strategy];
+    getLoadBalancer: function(loadBalancer, serviceDiscovery) {
+        var StrategyHandler = loadBalanceStrategies[loadBalancer.strategy];
         if (StrategyHandler === null) {
-            throw new Error("Invalid strategy: " + config.strategy);
+            throw new Error("Invalid load balancing strategy: " + loadBalancer.strategy);
         }
 
-        return new StrategyHandler(config);
+        return new StrategyHandler(loadBalancer, serviceDiscovery);
     }
 };
