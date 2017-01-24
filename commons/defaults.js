@@ -1,7 +1,7 @@
 var methodDefaults = {
 	"url": undefined,
 	"httpMethod": "GET",
-	"methodName": undefined,
+//	"methodName": undefined,
     "placeholders": {},
     "queryParams": {},
     "headers": {
