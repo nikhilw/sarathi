@@ -34,22 +34,19 @@ function SarathiClientBuilder(options) {
     var globalConfig = {};
 
     if (options) {
-        instance.setConfig(options);
+        _.merge(globalConfig, globalDefaults, options);
     }
 
     function setConfig(options) {
         _.merge(globalConfig, globalDefaults, options);
-		// TODO: call DiscoveryBuilder
         return this;
     }
 
     function addMethod(methodName, options) {
         var methodOptions;
         if (_.isString(options)) {
-            // _.merge(methodOptions, methodDefaults, {url: options});
 			methodOptions = {url: options};
         } else {
-            // _.merge(methodOptions, methodDefaults, options);
 			methodOptions = options;
         }
         globalConfig.methods[methodName] = methodOptions;
@@ -78,7 +75,7 @@ function SarathiClientBuilder(options) {
 
     function getDiscoveryBuilder(serverType) {
         globalConfig.discovery.serverType = serverType || globalConfig.discovery.serverType;
-        return new DiscoveryBuilder(globalConfig.discovery, this);
+        return new DiscoveryBuilder(globalConfig.discovery, instance);
     }
 
 	this.newMethodDefaults = function() {
@@ -86,8 +83,11 @@ function SarathiClientBuilder(options) {
     };
 
     function build() {
-        var client = new SarathiClient(globalConfig);
-        return client;
+		if (!globalConfig._state.discoveryHandler) { // Create if not already done.
+			(new DiscoveryBuilder(globalConfig.discovery, instance)).build();
+		}
+
+        return new SarathiClient(globalConfig);
     };
 
     this.addMethod = addMethod;

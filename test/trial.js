@@ -5,12 +5,11 @@ var clientBuilder = new SarathiClientBuilder();
 
 var client = clientBuilder.setConfig({
 		discovery: { // Service discovery config
-			// serviceId: "test-service-1",
 			serviceId: "express-service",
 			serverType: "consul" // direct
 		},
 		restClient: {
-			retry: 0 // total invocations: 1 + 3
+			retry: 2 // total invocations: 1 + 2
 		},
         loadBalancer: { // Load balancer config
 			strategy: "round-robin" // random, disabled
