@@ -6,23 +6,22 @@ var format = require("string-format");
 var loadBalancerStrategies = require("../loadbalancer/strategies");
 // var discoveryStrategies = require("../discovery/strategies");
 
-var defaults = {};
-var methodDefaults = {
-    placeholders: {},
-    queryParams: {},
-    headers: {},
-    body: undefined
-};
+var methodDefaults = require("../commons/defaults").methodDefaults;
 
-function methodBuilder(methodOptions, config) {
+function methodBuilder(methodOptions, restClientConfig, _instanceState) {
+	// console.log("original: ", methodOptions);
+	var cleanedUpMethodOptions = _.merge({}, methodDefaults, methodOptions);
     return function(optionOverrides, callback) {
         if (_.isFunction(optionOverrides)) {
             callback = optionOverrides;
         }
+		// console.log("cleanedUpMethodOptions: ", cleanedUpMethodOptions);
 
-        config.serviceDiscovery.status.done(function() {
-        var responseObject = {};
-            invokeEndpoint(config.retry, responseObject, _.merge({}, optionOverrides, methodOptions), config, function() {
+        _instanceState.serviceDiscovery.status.done(function() {
+			var responseObject = {};
+			var effectiveMethodOptions = _.merge({}, cleanedUpMethodOptions, optionOverrides || {});
+			// console.log("effective: ", effectiveMethodOptions);
+            invokeEndpoint(restClientConfig.retry, responseObject, effectiveMethodOptions, _instanceState, restClientConfig, function() {
 				// console.log("got response: " + responseObject);
                 return callback(responseObject.error, responseObject.response, responseObject.body);
             });
@@ -32,20 +31,32 @@ function methodBuilder(methodOptions, config) {
     };
 }
 
-function invokeEndpoint(retryCount, responseObject, methodOptions, config, callback) {
-	var url = config.strategy.getNextNode().url + methodOptions.url;
+function massageBody(requestOptions) {
+	var body = requestOptions.body;
+	if (_.isPlainObject(body) || _.isArray(body)) {
+		requestOptions.json = true;
+	}
+}
+
+function invokeEndpoint(retryCount, responseObject, methodOptions, _instanceState, restClientConfig, callback) {
+	var url = _instanceState.lbStrategy.getNextNode().url + methodOptions.url;
 	url = url.replace(/([^:]\/)\/+/g, "$1");
     url = format(url, methodOptions.placeholders);
 
-	request({
+	var requestOptions = {
         // url: config.strategy.getNextNode().url + methodOptions.url,
         url: url,
-        method: methodOptions.method || "GET",
+        method: methodOptions.httpMethod || "GET",
         headers: methodOptions.headers,
         qs: methodOptions.queryParams,
         body: methodOptions.body,
-        timeout: 2000 // TODO: option
-    }, function(error, response, body) {
+        timeout: restClientConfig.timeout // TODO: option
+    };
+	massageBody(requestOptions);
+	// console.log(requestOptions);
+
+
+	request(requestOptions, function(error, response, body) {
         responseObject.error = error;
         responseObject.response = response;
         responseObject.body = body;
@@ -61,26 +72,24 @@ function invokeEndpoint(retryCount, responseObject, methodOptions, config, callb
         // console.log("response: " + responseObject.error + "rc:" + retryCount);
         if (responseObject.error && retryCount > 0) {
             console.log("error occured, retrying: " + responseObject.error);
-            return invokeEndpoint(--retryCount, responseObject, methodOptions, config, callback);
+            return invokeEndpoint(--retryCount, responseObject, methodOptions, _instanceState, restClientConfig, callback);
         } else {
 			return callback(responseObject);
 		}
     });
 }
 
-function SarathiClient(options) {
+function SarathiClient(globalConfig) {
     var sarathiClient = this;
-    var config = {};
-    _.merge(config, defaults, options);
 
-    config.serviceDiscovery = config.discoveryHandler.discoverService(config); //TODO: use a promise to block till first discovery.
-    config.strategy = loadBalancerStrategies.getLoadBalancer(config);
+    globalConfig._state.serviceDiscovery = globalConfig._state.discoveryHandler.discoverService();
+    globalConfig._state.lbStrategy = loadBalancerStrategies.getLoadBalancer(globalConfig.loadBalancer, globalConfig._state.serviceDiscovery);
 
-    _.forEach(config.methods, function(methodOptions, methodName) {
-        sarathiClient[methodName] = methodBuilder(methodOptions, config);
+    _.forEach(globalConfig.methods, function(methodOptions, methodName) {
+        sarathiClient[methodName] = methodBuilder(methodOptions, globalConfig.restClient, globalConfig._state);
     });
 
-    this.newDummyOptions = function() {
+    this.newMethodDefaults = function() {
         return _.merge({}, methodDefaults);
     };
 };
