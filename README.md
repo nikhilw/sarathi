@@ -28,6 +28,7 @@ var testServiceClient = new SarathiClientBuilder().setConfig(options).build();
 ```
 
 **NOTE: [API](#API) is much more fun**
+
 #### Options
 * methods: ```Object``` declaring method name, endpoint they refer to, http method etc.
 * loadBalancer: ```Object``` Load balancer configuration
@@ -131,6 +132,7 @@ Object of method description objects. Key of the object is your method name: Ex:
 ```
 
 <a name="API"></a>
+
 ## API
 A fluent API for setting all configurations
 
@@ -260,3 +262,5 @@ Raise a github issue.
 ## Using Sarathi with hystrixjs
 Coming soon.
 
+## Sarathi, the name
+Pronounce it as /sa:raθiː/, it is a _noun_. It simply means: a charioteer. A sarathi controls the chariot, chooses the best route and navigates it. According to Hindu mythology, it also is an epithet of Krishna, an Avatar of Vishnu, who played the role of Arjun's charioteer, in the great war of Mahabharata and led him to victory.   
