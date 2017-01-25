@@ -2,8 +2,6 @@
 
 Service discovery aware declarative rest client with client side load balancing.
 
-Copyright (c) 2017 Nikhil Wanpal(nikhilw), Licensed under the MIT-LICENSE
-
 Sarathi is a rest client for microservices. It is modelled similar to probably the most popular rest client of this sort in Java world: Feign (spring-cloud-feign) and its load balancer: Ribbon (spring-cloud-ribbon), both from Netflix and fall under spring cloud project.
 
 ### NOTE: named as such or not, this software is still alpha!
@@ -27,9 +25,75 @@ var SarathiClientBuilder = require("sarathi");
 var testServiceClient = new SarathiClientBuilder().setConfig(options).build();
 ```
 
-**NOTE: [API](#API) is much more fun**
+## Examples
+#### Configuration
+```
+var SarathiClientBuilder = require("sarathi");
+var clientBuilder = new SarathiClientBuilder();
+
+var client = clientBuilder.setConfig({
+		discovery: {
+			serviceId: "express-service",
+			serverType: "consul"
+		},
+		restClient: {
+			retry: 2
+		},
+        loadBalancer: {
+			strategy: "round-robin"
+		}
+    })
+    .getDiscoveryBuilder()
+    	.setClientConfig({}) // for when consul is running on localhost:8500
+    	.setRefreshRate(3000)
+    .build()
+    .addMethod("getUsers", "/users")
+    .addMethod("getUser", { url: "/users/{id}", headers: {accept: "text/html" }})
+    .build();
+```
+
+#### Simple invocation
+```
+client.getUsers(function(e, r, b) {
+    console.log(b);
+});
+```
+
+#### Resolving placeholders and passing custom headers
+```
+client.getUser({placeholders: { id: 4 }, headers: {someHeader: "value"}}, function(e, r, b) {
+    console.log(b);
+});
+```
+
+#### Passing Query parameters
+```
+client.getUsers({queryParams: {name: "nikhil"}}, function(e, r, b) {
+    console.log(b);
+});
+```
+
+#### Making a POST call with JSON body
+```
+client.getUsers({httpMethod: "POST", body: {v: "some body"}}, function(e, r, b) {
+    console.log(b);
+});
+```
+
+#### Making a POST call with String body
+```
+client.getUsers({httpMethod: "POST", body: '{"v": "some body"}' }, function(e, r, b) {
+    console.log(b);
+});
+```
+#### Gardening
+```
+Please return when you are sober ;)
+```
 
 #### Options
+**NOTE: [API](#API) is much more fun**
+
 * methods: ```Object``` declaring method name, endpoint they refer to, http method etc.
 * loadBalancer: ```Object``` Load balancer configuration
 * discovery: ```Object``` Service discoery configuration
@@ -192,72 +256,6 @@ NOT Implemented; but this is where you can set the data center preference
 ##### DiscoveryBuilder# build()
 builds the discovery handler instance and returns the instance of SarathiClientBuilder; helps chaining calls.
 
-
-## Code Samples
-#### Configuration
-```
-var SarathiClientBuilder = require("sarathi");
-var clientBuilder = new SarathiClientBuilder();
-
-var client = clientBuilder.setConfig({
-		discovery: {
-			serviceId: "express-service",
-			serverType: "consul"
-		},
-		restClient: {
-			retry: 2
-		},
-        loadBalancer: {
-			strategy: "round-robin"
-		}
-    })
-    .getDiscoveryBuilder("consul")
-    	.setClientConfig({}) // for when consul is running on localhost:8500
-    	.setRefreshRate(3000)
-    .build()
-    .addMethod("getUsers", "/users")
-    .addMethod("getUser", { url: "/users/{id}", headers: {accept: "text/html" }})
-    .build();
-```
-
-#### Simple invocation
-```
-client.getUsers(function(e, r, b) {
-    console.log(b);
-});
-```
-
-#### Resolving placeholders and passing custom headers
-```
-client.getUser({placeholders: { id: 4 }, headers: {someHeader: "value"}}, function(e, r, b) {
-    console.log(b);
-});
-```
-
-#### Passing Query parameters
-```
-client.getUsers({queryParams: {name: "nikhil"}}, function(e, r, b) {
-    console.log(b);
-});
-```
-
-#### Making a POST call with JSON body
-```
-client.getUsers({httpMethod: "POST", body: {v: "some body"}}, function(e, r, b) {
-    console.log(b);
-});
-```
-
-#### Making a POST call with String body
-```
-client.getUsers({httpMethod: "POST", body: '{"v": "some body"}' }, function(e, r, b) {
-    console.log(b);
-});
-```
-#### Gardening
-```
-Raise a github issue.
-```
 
 ## Using Sarathi with hystrixjs
 Coming soon.

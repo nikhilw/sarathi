@@ -49,3 +49,4 @@ target/
 *.iml
 node_modules/
 .vscode/
+.fuse_*
