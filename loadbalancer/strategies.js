@@ -49,7 +49,7 @@ var loadBalanceStrategies = {
 module.exports = {
     getLoadBalancer: function(loadBalancer, serviceDiscovery) {
         var StrategyHandler = loadBalanceStrategies[loadBalancer.strategy];
-        if (StrategyHandler === null) {
+        if (!StrategyHandler) {
             throw new Error("Invalid load balancing strategy: " + loadBalancer.strategy);
         }
 

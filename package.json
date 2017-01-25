@@ -30,5 +30,10 @@
     "promise": "~7.1.1",
     "request": "~2.79.0",
     "string-format": "~0.5.0"
+  },
+  "devDependencies": {
+    "chai": "~3.5.0",
+    "gulp-mocha": "~3.0.1",
+    "mocha": "~3.2.0"
   }
 }
