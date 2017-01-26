@@ -19,10 +19,10 @@ function ConsulClient(discoveryConfig) {
     var client = discoveryConfig.client || consul(discoveryConfig.clientConfig);
 
     setInterval(function() {
-        instance.discoverService();
+        instance.discoverInstances();
     }, discoveryConfig.refreshRate);
 
-    this.discoverService = function() {
+    this.discoverInstances = function() {
         var serviceDiscovery = {
             nodes: [],
             status: new Promise(
@@ -38,6 +38,7 @@ function ConsulClient(discoveryConfig) {
 
                         // console.log(result);
                         if (result.length) {
+							serviceDiscovery.nodes.length = 0; // clear listed nodes.
                             _.forEach(result, function(serviceDetails) {
                                 // console.log(serviceDetails);
                                 serviceDiscovery.nodes.push({
@@ -69,7 +70,7 @@ function DirectClient(discoveryConfig) {
 		throw new Error("instances must be defined for direct discovery");
 	}
 
-    this.discoverService = function() {
+    this.discoverInstances = function() {
         var serviceDiscovery = {
             nodes: discoveryConfig.instances.slice(),
             status: new Promise(

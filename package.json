@@ -1,6 +1,6 @@
 {
   "name": "sarathi",
-  "version": "0.0.5",
+  "version": "0.0.6-alpha.1",
   "description": "Service discovery aware, declarative rest client with client side load balancing",
   "main": "index.js",
   "scripts": {
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "chai": "~3.5.0",
+    "gulp": "~3.9.1",
     "gulp-mocha": "~3.0.1",
     "mocha": "~3.2.0"
   }

@@ -82,7 +82,7 @@ function invokeEndpoint(retryCount, responseObject, methodOptions, _instanceStat
 function SarathiClient(globalConfig) {
     var sarathiClient = this;
 
-    globalConfig._state.serviceDiscovery = globalConfig._state.discoveryHandler.discoverService();
+    globalConfig._state.serviceDiscovery = globalConfig._state.discoveryHandler.discoverInstances();
     globalConfig._state.lbStrategy = loadBalancerStrategies.getLoadBalancer(globalConfig.loadBalancer, globalConfig._state.serviceDiscovery);
 
     _.forEach(globalConfig.methods, function(methodOptions, methodName) {
