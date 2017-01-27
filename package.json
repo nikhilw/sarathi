@@ -1,6 +1,6 @@
 {
   "name": "sarathi",
-  "version": "0.0.6-alpha.1",
+  "version": "0.0.6",
   "description": "Service discovery aware, declarative rest client with client side load balancing",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "lodash": "~4.17.4",
     "promise": "~7.1.1",
     "request": "~2.79.0",
-    "sarathi-discovery-strategy": "0.0.1-alpha.1",
+    "sarathi-discovery-strategy": "0.0.1",
     "string-format": "~0.5.0"
   },
   "devDependencies": {

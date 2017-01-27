@@ -2,6 +2,12 @@ var chai = require("chai");
 chai.should();
 var lbStrategies = require("../../loadbalancer/strategies");
 
+function TestDiscoveryHandler(nodes) {
+	this.getDiscoveredInstances = function () {
+		return nodes;
+	}
+}
+
 describe("loadbalancer/strategies", function () {
 	describe("factory method", function () {
 		it("should throw exception for invalid strategy", function () {
@@ -15,7 +21,7 @@ describe("loadbalancer/strategies", function () {
 		const conf = { strategy: "round-robin" };
 
 		it("should return nodes in loop", function () {
-			const roundRobin = lbStrategies.getLoadBalancer(conf, { nodes: ["1", "2", "3"] });
+			const roundRobin = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler(["1", "2", "3"]));
 
 			roundRobin.getNextNode().should.be.equal("1");
 			roundRobin.getNextNode().should.be.equal("2");
@@ -26,7 +32,7 @@ describe("loadbalancer/strategies", function () {
 		});
 
 		it("should throw error when no nodes found", function () {
-			const roundRobin = lbStrategies.getLoadBalancer(conf, { nodes: [] });
+			const roundRobin = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler([]));
 			(function () {
 				roundRobin.getNextNode();
 			}).should.Throw(Error);
@@ -37,7 +43,7 @@ describe("loadbalancer/strategies", function () {
 		const conf = { strategy: "random" };
 
 		it("should throw error when no nodes found", function () {
-			const randomStrategy = lbStrategies.getLoadBalancer(conf, { nodes: [] });
+			const randomStrategy = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler([]));
 			(function () {
 				randomStrategy.getNextNode();
 			}).should.Throw(Error);
@@ -48,7 +54,7 @@ describe("loadbalancer/strategies", function () {
 		const conf = { strategy: "disabled" };
 
 		it("should return same, first, node every time", function () {
-			const disabledStrategy = lbStrategies.getLoadBalancer(conf, { nodes: ["1", "2", "3"] });
+			const disabledStrategy = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler(["1", "2", "3"]));
 
 			disabledStrategy.getNextNode().should.be.equal("1");
 			disabledStrategy.getNextNode().should.be.equal("1");
@@ -59,7 +65,7 @@ describe("loadbalancer/strategies", function () {
 		});
 
 		it("should throw error when no nodes found", function () {
-			const disabledStrategy = lbStrategies.getLoadBalancer(conf, { nodes: [] });
+			const disabledStrategy = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler([]));
 			(function () {
 				disabledStrategy.getNextNode();
 			}).should.Throw(Error);
