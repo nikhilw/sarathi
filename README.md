@@ -4,8 +4,6 @@ Service discovery aware declarative rest client with client side load balancing.
 
 Sarathi is a rest client for microservices. It is modelled similar to probably the most popular rest client of this sort in Java world: Feign (spring-cloud-feign) and its load balancer: Ribbon (spring-cloud-ribbon), both from Netflix and fall under spring cloud project.
 
-### NOTE: named as such or not, this software is still alpha!
-
 ## Installing
 ```npm
 npm install --save sarathi
