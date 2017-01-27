@@ -3,22 +3,15 @@
 var _ = require("lodash");
 var SarathiClient = require("./SarathiClient");
 var methodDefaults = require("../commons/defaults").methodDefaults;
-var DiscoveryBuilder = require("../discovery/strategies").DiscoveryBuilder;
+// var DiscoveryBuilder = require("../discovery/strategies").DiscoveryBuilder;
+var DiscoveryStrategy = require("sarathi-discovery-strategy");
 
 var globalDefaults = {
 	methods: {}, // methods to define on this client and their endpoints and other parameters
 	loadBalancer: { // Load balancer config
 		strategy: "round-robin" // random, disabled
 	},
-	discovery: { // Service discovery config
-		serviceId: "test-service", // name of your service
-		serverType: "consul", // direct, [eureka, coming]
-		client: undefined, // instance of service discovery client
-		clientConfig: {}, // configuration to create disovery client instance: server ip, port etc
-		refreshRate: 30000, // timeout to refresh services from discovery server
-		zone: undefined, // data-center or zone of preference
-		instances: undefined // ["url1", "url2"]
-	},
+	discoveryStrategy: undefined,
 	restClient: { // Rest client config
 		retry: 2, // number of retries on failure before returning error; value 2 means: 1 + 2 = 3 max calls.
 		timeout: 2000 // REST call timeout
@@ -73,18 +66,26 @@ function SarathiClientBuilder(options) {
         return this;
     }
 
-    function getDiscoveryBuilder(serverType) {
-        globalConfig.discovery.serverType = serverType || globalConfig.discovery.serverType;
-        return new DiscoveryBuilder(globalConfig.discovery, instance);
-    }
+	function setDiscoveryStrategy(discoveryStrategyInst) {
+		if (!(discoveryStrategyInst instanceof DiscoveryStrategy)) {
+			throw new Error("discoveryStrategy must be an instace of DiscoveryStrategy from sarathi-discovery-strategy package.");
+		}
+		globalConfig._state.discoveryHandler = discoveryStrategyInst;
+		return this;
+	}
 
 	this.newMethodDefaults = function() {
         return _.merge({}, methodDefaults);
     };
 
     function build() {
-		if (!globalConfig._state.discoveryHandler) { // Create if not already done.
-			(new DiscoveryBuilder(globalConfig.discovery, instance)).build();
+		if (globalConfig.discoveryStrategy && globalConfig.discoveryStrategy instanceof DiscoveryStrategy) {
+			globalConfig._state.discoveryHandler = globalConfig.discoveryStrategy;
+		}
+
+		// Only if someone tries to sneak past.
+		if (!(globalConfig._state.discoveryHandler instanceof DiscoveryStrategy)) {
+			throw new Error("discoveryStrategy must be an instace of DiscoveryStrategy from sarathi-discovery-strategy package.");
 		}
 
         return new SarathiClient(globalConfig);
@@ -94,11 +95,7 @@ function SarathiClientBuilder(options) {
     this.build = build;
     this.setConfig = setConfig;
     this.setLoadBalanceStrategy = setLoadBalanceStrategy;
-    this.getDiscoveryBuilder = getDiscoveryBuilder;
-
-    this._setDiscoveryHandler = function(discoveryHandler) {
-        globalConfig._state.discoveryHandler = discoveryHandler;
-    };
+    this.setDiscoveryStrategy = setDiscoveryStrategy;
 };
 
 module.exports = SarathiClientBuilder;

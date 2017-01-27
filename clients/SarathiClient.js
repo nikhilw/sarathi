@@ -16,8 +16,9 @@ function methodBuilder(methodOptions, restClientConfig, _instanceState) {
             callback = optionOverrides;
         }
 		// console.log("cleanedUpMethodOptions: ", cleanedUpMethodOptions);
+		// console.log(_instanceState.discoveryHandler.getDiscoveredInstances().length);
 
-        _instanceState.serviceDiscovery.status.done(function() {
+        _instanceState.discoveryHandler.discoveryDone(function() {
 			var responseObject = {};
 			var effectiveMethodOptions = _.merge({}, cleanedUpMethodOptions, optionOverrides || {});
 			// console.log("effective: ", effectiveMethodOptions);
@@ -82,8 +83,8 @@ function invokeEndpoint(retryCount, responseObject, methodOptions, _instanceStat
 function SarathiClient(globalConfig) {
     var sarathiClient = this;
 
-    globalConfig._state.serviceDiscovery = globalConfig._state.discoveryHandler.discoverInstances();
-    globalConfig._state.lbStrategy = loadBalancerStrategies.getLoadBalancer(globalConfig.loadBalancer, globalConfig._state.serviceDiscovery);
+    globalConfig._state.discoveryHandler.discoverInstances();
+    globalConfig._state.lbStrategy = loadBalancerStrategies.getLoadBalancer(globalConfig.loadBalancer, globalConfig._state.discoveryHandler);
 
     _.forEach(globalConfig.methods, function(methodOptions, methodName) {
         sarathiClient[methodName] = methodBuilder(methodOptions, globalConfig.restClient, globalConfig._state);

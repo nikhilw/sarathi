@@ -6,11 +6,12 @@ function Strategy() {
     this.getNextNode = _.noop;
 };
 
-function RoundRobin(loadBalancer, serviceDiscovery) {
-    var nodes = serviceDiscovery.nodes;
+function RoundRobin(loadBalancer, discoveryHandler) {
+    var nodes = discoveryHandler.getDiscoveredInstances();
     var current = 0;
 
     this.getNextNode = function() {
+		// console.log("getNextNode: " + nodes.length);
         if (nodes.length) {
             return nodes[(current++ % nodes.length)];
         }
@@ -18,8 +19,8 @@ function RoundRobin(loadBalancer, serviceDiscovery) {
     };
 }
 
-function Random(loadBalancer, serviceDiscovery) {
-    var nodes = serviceDiscovery.nodes;
+function Random(loadBalancer, discoveryHandler) {
+    var nodes = discoveryHandler.getDiscoveredInstances();
 
     this.getNextNode = function() {
         if (nodes.length) {
@@ -29,8 +30,8 @@ function Random(loadBalancer, serviceDiscovery) {
     };
 }
 
-function DisabledLB(loadBalancer, serviceDiscovery) {
-    var nodes = serviceDiscovery.nodes;
+function DisabledLB(loadBalancer, discoveryHandler) {
+    var nodes = discoveryHandler.getDiscoveredInstances();
 
     this.getNextNode = function() {
         if (nodes.length) {
@@ -47,12 +48,12 @@ var loadBalanceStrategies = {
 };
 
 module.exports = {
-    getLoadBalancer: function(loadBalancer, serviceDiscovery) {
+    getLoadBalancer: function(loadBalancer, discoveryHandler) {
         var StrategyHandler = loadBalanceStrategies[loadBalancer.strategy];
         if (!StrategyHandler) {
             throw new Error("Invalid load balancing strategy: " + loadBalancer.strategy);
         }
 
-        return new StrategyHandler(loadBalancer, serviceDiscovery);
+        return new StrategyHandler(loadBalancer, discoveryHandler);
     }
 };

@@ -4,10 +4,10 @@ var SarathiClientBuilder = require("../index.js");
 var clientBuilder = new SarathiClientBuilder();
 
 var client = clientBuilder.setConfig({
-		discovery: { // Service discovery config
-			serviceId: "express-service",
-			serverType: "consul" // direct
-		},
+		// discovery: { // Service discovery config
+		// 	serviceId: "express-service",
+		// 	serverType: "consul" // direct
+		// },
 		restClient: {
 			retry: 2 // total invocations: 1 + 2
 		},
