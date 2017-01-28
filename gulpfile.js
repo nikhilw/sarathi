@@ -1,17 +1,24 @@
 var gulp = require("gulp");
-// var eslint = require("gulp-eslint");
-const mocha = require("gulp-mocha");
+var mocha = require("gulp-mocha");
+var istanbul = require("gulp-istanbul");
 
-gulp.task("test", () =>
-    gulp.src("test/**/*.js", {read: false})
-        // gulp-mocha needs filepaths so you can"t have any plugins before it
-        .pipe(mocha({reporter: "spec"}))
-		.once("error", () => {
-            process.exit(1);
-        })
-        .once("end", () => {
-            process.exit();
-        })
-);
+gulp.task("pre-test", function () {
+	return gulp.src(["./clients/**/*.js", "./commons/**/*.js", "./loadbalancer/**/*.js"])
+		.pipe(istanbul())
+		.pipe(istanbul.hookRequire());
+});
+
+gulp.task("test", ["pre-test"], function () {
+	return gulp.src("test/**/*.js", {read: false})
+		.pipe(mocha({reporter: "spec"}))
+		.pipe(istanbul.writeReports())
+		.pipe(istanbul.enforceThresholds({thresholds: {global: 80}}))
+		.once("error", function () {
+			process.exit(1);
+		})
+		.once("end", function () {
+			process.exit();
+		});
+});
 
 gulp.task("default", ["test"]);

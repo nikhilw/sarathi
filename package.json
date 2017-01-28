@@ -4,7 +4,8 @@
   "description": "Service discovery aware, declarative rest client with client side load balancing",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test",
+    "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "repository": {
     "type": "git",
@@ -34,7 +35,9 @@
   },
   "devDependencies": {
     "chai": "~3.5.0",
+    "coveralls": "~2.11.15",
     "gulp": "~3.9.1",
+    "gulp-istanbul": "~1.1.1",
     "gulp-mocha": "~3.0.1",
     "mocha": "~3.2.0"
   }
