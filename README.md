@@ -194,8 +194,8 @@ set the retry count for rest client.
 ##### SarathiClientBuilder #setLoadBalanceStrategy(strategy)
 set the strategy for load balancing
 
-##### SarathiClientBuilder #getDiscoveryBuilder(serverType)
-returns an instance of DiscoveryBuilder of type ```serverType```
+##### SarathiClientBuilder #setDiscoveryStrategy(```Object```)
+Instance of [sarathi-discovery-strategy](https://www.npmjs.com/package/sarathi-discovery-strategy), currently available implementations: [nodiscovery](https://www.npmjs.com/package/sarathi-nodiscovery-strategy) (when no discovery server), [consul.io](https://www.npmjs.com/package/sarathi-consul-strategy)
 
 ##### SarathiClientBuilder #newMethodDefaults()
 returns an object with default values of methodOptions

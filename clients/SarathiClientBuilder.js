@@ -3,7 +3,6 @@
 var _ = require("lodash");
 var SarathiClient = require("./SarathiClient");
 var methodDefaults = require("../commons/defaults").methodDefaults;
-// var DiscoveryBuilder = require("../discovery/strategies").DiscoveryBuilder;
 var DiscoveryStrategy = require("sarathi-discovery-strategy");
 
 var globalDefaults = {
@@ -30,12 +29,12 @@ function SarathiClientBuilder(options) {
         _.merge(globalConfig, globalDefaults, options);
     }
 
-    function setConfig(options) {
+    this.setConfig = function(options) {
         _.merge(globalConfig, globalDefaults, options);
         return this;
-    }
+    };
 
-    function addMethod(methodName, options) {
+    this.addMethod = function(methodName, options) {
         var methodOptions;
         if (_.isString(options)) {
 			methodOptions = {url: options};
@@ -61,24 +60,24 @@ function SarathiClientBuilder(options) {
 		return this;
 	};
 
-    function setLoadBalanceStrategy(strategy) {
+    this.setLoadBalanceStrategy = function(strategy) {
         globalConfig.loadBalancer.strategy = strategy;
         return this;
-    }
+    };
 
-	function setDiscoveryStrategy(discoveryStrategyInst) {
+	this.setDiscoveryStrategy = function(discoveryStrategyInst) {
 		if (!(discoveryStrategyInst instanceof DiscoveryStrategy)) {
 			throw new Error("discoveryStrategy must be an instace of DiscoveryStrategy from sarathi-discovery-strategy package.");
 		}
 		globalConfig._state.discoveryHandler = discoveryStrategyInst;
 		return this;
-	}
+	};
 
 	this.newMethodDefaults = function() {
         return _.merge({}, methodDefaults);
     };
 
-    function build() {
+    this.build = function() {
 		if (globalConfig.discoveryStrategy && globalConfig.discoveryStrategy instanceof DiscoveryStrategy) {
 			globalConfig._state.discoveryHandler = globalConfig.discoveryStrategy;
 		}
@@ -90,12 +89,6 @@ function SarathiClientBuilder(options) {
 
         return new SarathiClient(globalConfig);
     };
-
-    this.addMethod = addMethod;
-    this.build = build;
-    this.setConfig = setConfig;
-    this.setLoadBalanceStrategy = setLoadBalanceStrategy;
-    this.setDiscoveryStrategy = setDiscoveryStrategy;
-};
+}
 
 module.exports = SarathiClientBuilder;
