@@ -4,7 +4,6 @@ var request = require("request");
 var format = require("string-format");
 
 var loadBalancerStrategies = require("../loadbalancer/strategies");
-// var discoveryStrategies = require("../discovery/strategies");
 
 var methodDefaults = require("../commons/defaults").methodDefaults;
 
@@ -82,6 +81,7 @@ function invokeEndpoint(retryCount, responseObject, methodOptions, _instanceStat
 
 function SarathiClient(globalConfig) {
     var sarathiClient = this;
+	// sarathiClient._globalConfig = globalConfig;
 
     globalConfig._state.discoveryHandler.discoverInstances();
     globalConfig._state.lbStrategy = loadBalancerStrategies.getLoadBalancer(globalConfig.loadBalancer, globalConfig._state.discoveryHandler);

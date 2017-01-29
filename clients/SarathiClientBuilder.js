@@ -23,11 +23,9 @@ function SarathiClientBuilder(options) {
     if (!(this instanceof SarathiClientBuilder)) {
         return new SarathiClientBuilder(options);
     }
-    var globalConfig = {};
 
-    if (options) {
-        _.merge(globalConfig, globalDefaults, options);
-    }
+    var globalConfig = {};
+	_.merge(globalConfig, globalDefaults, options);
 
     this.setConfig = function(options) {
         _.merge(globalConfig, globalDefaults, options);
@@ -41,6 +39,7 @@ function SarathiClientBuilder(options) {
         } else {
 			methodOptions = options;
         }
+
         globalConfig.methods[methodName] = methodOptions;
         return this;
     };
