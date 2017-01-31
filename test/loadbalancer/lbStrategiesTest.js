@@ -9,7 +9,7 @@ function TestDiscoveryHandler(nodes) {
 }
 
 describe("loadbalancer/strategies", function () {
-	describe("factory method", function () {
+	describe("factory method, getLoadBalancer", function () {
 		it("should throw exception for invalid strategy", function () {
 			(function () {
 				lbStrategies.getLoadBalancer({ strategy: "invalid" }, {});
@@ -35,12 +35,23 @@ describe("loadbalancer/strategies", function () {
 			const roundRobin = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler([]));
 			(function () {
 				roundRobin.getNextNode();
-			}).should.Throw(Error);
+			}).should.Throw(Error, "No nodes found for service.");
 		});
 	});
 
 	describe("random strategy", function () {
 		const conf = { strategy: "random" };
+
+		it("should return nodes, at random, but unable to test that", function () {
+			const roundRobin = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler(["1", "2", "3"]));
+
+			roundRobin.getNextNode().should.be.ok;
+			roundRobin.getNextNode().should.be.ok;
+			roundRobin.getNextNode().should.be.ok;
+			roundRobin.getNextNode().should.be.ok;
+			roundRobin.getNextNode().should.be.ok;
+			roundRobin.getNextNode().should.be.ok;
+		});
 
 		it("should throw error when no nodes found", function () {
 			const randomStrategy = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler([]));
@@ -53,7 +64,7 @@ describe("loadbalancer/strategies", function () {
 	describe("disabled strategy", function () {
 		const conf = { strategy: "disabled" };
 
-		it("should return same, first, node every time", function () {
+		it("should return the same, first, node every time", function () {
 			const disabledStrategy = lbStrategies.getLoadBalancer(conf, new TestDiscoveryHandler(["1", "2", "3"]));
 
 			disabledStrategy.getNextNode().should.be.equal("1");

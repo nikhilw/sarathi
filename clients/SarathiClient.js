@@ -81,7 +81,11 @@ function invokeEndpoint(retryCount, responseObject, methodOptions, _instanceStat
 
 function SarathiClient(globalConfig) {
     var sarathiClient = this;
-	// sarathiClient._globalConfig = globalConfig;
+
+    // Enable testing of properties
+	if (process.env.NODE_ENV === "test") {
+		sarathiClient._globalConfig = globalConfig;
+	}
 
     globalConfig._state.discoveryHandler.discoverInstances();
     globalConfig._state.lbStrategy = loadBalancerStrategies.getLoadBalancer(globalConfig.loadBalancer, globalConfig._state.discoveryHandler);

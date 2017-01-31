@@ -176,31 +176,31 @@ A fluent API for setting all configurations
 #### SarathiClientBuilder(options)
 constructor, sets the options as passed. Options not mandatory.
 
-##### SarathiClientBuilder# setConfig(options)
+##### #setConfig(options)
 override anything set in constructor.
 
-##### SarathiClientBuilder #addMethod(methodName, methodOptions OR url)
+##### #addMethod(methodName, methodOptions | endpointUrl)
 adds a single method to the client, with provided method options. If you are fine with defaults, just pass the url instead.
 
-##### SarathiClientBuilder #setMethods(methods)
-set all methods on client, with structure as {methodName: methodOptions}
+##### #setMethods(methods)
+set all methods on client, with structure as {methodName: methodOptions, methodName2: methodOptions2}
 
-##### SarathiClientBuilder #setRestClientConfig(restClientConfig)
+##### #setRestClientConfig(restClientConfig)
 set config for rest client.
 
-##### SarathiClientBuilder #setRetryCount(retryCount)
+##### #setRetryCount(retryCount ```:Number```)
 set the retry count for rest client.
 
-##### SarathiClientBuilder #setLoadBalanceStrategy(strategy)
+##### #setLoadBalanceStrategy(strategy ```:String```)
 set the strategy for load balancing
 
-##### SarathiClientBuilder #setDiscoveryStrategy(```Object```)
+##### #setDiscoveryStrategy(```Object```)
 Instance of [sarathi-discovery-strategy](https://www.npmjs.com/package/sarathi-discovery-strategy), currently available implementations: [nodiscovery](https://www.npmjs.com/package/sarathi-nodiscovery-strategy) (when no discovery server), [consul.io](https://www.npmjs.com/package/sarathi-consul-strategy)
 
-##### SarathiClientBuilder #newMethodDefaults()
+##### #newMethodDefaults()
 returns an object with default values of methodOptions
 
-##### SarathiClientBuilder #build()
+##### #build()
 builds the configuration provided and returns the restClient.
 
 

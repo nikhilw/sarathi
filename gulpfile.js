@@ -9,6 +9,7 @@ gulp.task("pre-test", function () {
 });
 
 gulp.task("test", ["pre-test"], function () {
+	process.env.NODE_ENV = "test";
 	return gulp.src("test/**/*.js", {read: false})
 		.pipe(mocha({reporter: "spec"}))
 		.pipe(istanbul.writeReports())

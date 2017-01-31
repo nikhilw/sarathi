@@ -2,10 +2,6 @@
 "use strict";
 var _ = require("lodash");
 
-function Strategy() {
-    this.getNextNode = _.noop;
-};
-
 function RoundRobin(loadBalancer, discoveryHandler) {
     var nodes = discoveryHandler.getDiscoveredInstances();
     var current = 0;
@@ -15,7 +11,7 @@ function RoundRobin(loadBalancer, discoveryHandler) {
         if (nodes.length) {
             return nodes[(current++ % nodes.length)];
         }
-        throw new Error("No nodes for service.");
+        throw new Error("No nodes found for service.");
     };
 }
 

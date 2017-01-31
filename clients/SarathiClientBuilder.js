@@ -27,6 +27,11 @@ function SarathiClientBuilder(options) {
     var globalConfig = {};
 	_.merge(globalConfig, globalDefaults, options);
 
+	// Enable testing of properties
+	if (process.env.NODE_ENV === "test") {
+		instance._globalConfig = globalConfig;
+	}
+
     this.setConfig = function(options) {
         _.merge(globalConfig, globalDefaults, options);
         return this;
