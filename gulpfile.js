@@ -13,7 +13,7 @@ gulp.task("test", ["pre-test"], function () {
 	return gulp.src("test/**/*.js", {read: false})
 		.pipe(mocha({reporter: "spec"}))
 		.pipe(istanbul.writeReports())
-		.pipe(istanbul.enforceThresholds({thresholds: {global: 80}}))
+		.pipe(istanbul.enforceThresholds({thresholds: {global: 30}}))
 		.once("error", function () {
 			process.exit(1);
 		})
