@@ -55,7 +55,6 @@ function invokeEndpoint(retryCount, responseObject, methodOptions, _instanceStat
 	massageBody(requestOptions);
 	// console.log(requestOptions);
 
-
 	request(requestOptions, function(error, response, body) {
         responseObject.error = error;
         responseObject.response = response;
@@ -97,6 +96,6 @@ function SarathiClient(globalConfig) {
     this.newMethodDefaults = function() {
         return _.merge({}, methodDefaults);
     };
-};
+}
 
 module.exports = SarathiClient;
