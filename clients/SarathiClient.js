@@ -11,6 +11,7 @@ function methodBuilder(methodOptions, restClientConfig, _instanceState) {
 	// console.log("original: ", methodOptions);
 	var cleanedUpMethodOptions = _.merge({}, methodDefaults, methodOptions);
     return function(optionOverrides, callback) {
+    	// console.log(arguments);
         if (_.isFunction(optionOverrides)) {
             callback = optionOverrides;
         }
@@ -88,6 +89,9 @@ function SarathiClient(globalConfig) {
 
     globalConfig._state.discoveryHandler.discoverInstances();
     globalConfig._state.lbStrategy = loadBalancerStrategies.getLoadBalancer(globalConfig.loadBalancer, globalConfig._state.discoveryHandler);
+
+    // console.log("loadBalancerStrategies.getLoadBalancer:", loadBalancerStrategies.getLoadBalancer)
+    // console.log("globalConfig._state.lbStrategy:", globalConfig._state.lbStrategy)
 
     _.forEach(globalConfig.methods, function(methodOptions, methodName) {
         sarathiClient[methodName] = methodBuilder(methodOptions, globalConfig.restClient, globalConfig._state);
