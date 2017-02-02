@@ -47,36 +47,45 @@ var client = clientBuilder.setConfig({
 
 #### Simple invocation
 ```javascript
-client.getUsers(function(e, r, b) {
-    console.log(b);
+client.getUsers(function(error, response, body) {
+    console.log(body);
 });
+```
+
+#### Simple with promises
+```javascript
+client.getUsers().then(function(error, response, body) {
+	console.log(body);
+}, function(err) {
+    console.log(err);
+})
 ```
 
 #### Resolving placeholders and passing custom headers
 ```javascript
-client.getUser({placeholders: { id: 4 }, headers: {someHeader: "value"}}, function(e, r, b) {
-    console.log(b);
+client.getUser({placeholders: { id: 4 }, headers: {someHeader: "value"}}, function(error, response, body) {
+    console.log(body);
 });
 ```
 
 #### Passing Query parameters
 ```javascript
-client.getUsers({queryParams: {name: "nikhil"}}, function(e, r, b) {
-    console.log(b);
+client.getUsers({queryParams: {name: "nikhil"}}, function(error, response, body) {
+    console.log(body);
 });
 ```
 
 #### Making a POST call with JSON body
 ```javascript
-client.getUsers({httpMethod: "POST", body: {v: "some body"}}, function(e, r, b) {
-    console.log(b);
+client.getUsers({httpMethod: "POST", body: {v: "some body"}}, function(error, response, body) {
+    console.log(body);
 });
 ```
 
 #### Making a POST call with String body
 ```javascript
-client.getUsers({httpMethod: "POST", body: '{"v": "some body"}' }, function(e, r, b) {
-    console.log(b);
+client.getUsers({httpMethod: "POST", body: '{"v": "some body"}' }, function(error, response, body) {
+    console.log(body);
 });
 ```
 #### Gardening
@@ -203,6 +212,9 @@ returns an object with default values of methodOptions
 ##### #build()
 builds the configuration provided and returns the restClient.
 
+
+## Promises
+Methods added on the client return promises which can be used instead of passing callback to the method.
 
 ## Using Sarathi with hystrixjs
 Coming soon.

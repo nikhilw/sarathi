@@ -2,6 +2,7 @@
 var _ = require("lodash");
 var request = require("request");
 var format = require("string-format");
+var Promise = require("promise");
 
 var loadBalancerStrategies = require("../loadbalancer/strategies");
 
@@ -18,17 +19,22 @@ function methodBuilder(methodOptions, restClientConfig, _instanceState) {
 		// console.log("cleanedUpMethodOptions: ", cleanedUpMethodOptions);
 		// console.log(_instanceState.discoveryHandler.getDiscoveredInstances().length);
 
-        _instanceState.discoveryHandler.discoveryDone(function() {
-			var responseObject = {};
-			var effectiveMethodOptions = _.merge({}, cleanedUpMethodOptions, optionOverrides || {});
-			// console.log("effective: ", effectiveMethodOptions);
-            invokeEndpoint(restClientConfig.retry, responseObject, effectiveMethodOptions, _instanceState, restClientConfig, function() {
-				// console.log("got response: " + responseObject);
-                return callback(responseObject.error, responseObject.response, responseObject.body);
-            });
-        }, function(err) {
-            return callback(err);
-        });
+		var promise = new Promise(function(resolve, reject) {
+			_instanceState.discoveryHandler.discoveryDone(function() {
+				var responseObject = {};
+				var effectiveMethodOptions = _.merge({}, cleanedUpMethodOptions, optionOverrides || {});
+				// console.log("effective: ", effectiveMethodOptions);
+				invokeEndpoint(restClientConfig.retry, responseObject, effectiveMethodOptions, _instanceState, restClientConfig, function() {
+					// console.log("got response: " + responseObject);
+					return resolve(responseObject.error, responseObject.response, responseObject.body);
+				});
+			}, function(err) {
+				return reject(err);
+			});
+		});
+
+        promise.done(callback, callback);
+        return promise;
     };
 }
 

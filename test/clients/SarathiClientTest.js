@@ -120,7 +120,7 @@ describe("SarathiClient", function () {
 		dummyRequest.refFun.reset()
 	});
 
-	it("should pass all provided parameters to http call", function (done) {
+	it("should pass all parameters provided at initialization to http call", function (done) {
 		sarathiConfig.methods.testParams = sampleMethodParams;
 		loadBalancerModule.getLoadBalancer = loadBalancer;
 
@@ -146,7 +146,32 @@ describe("SarathiClient", function () {
 		});
 	});
 
-	it("should pass all provided parameters to http call, should accept Object body", function (done) {
+	it("should pass all parameters provided at initialization to http call; should return a promise and resolve for success", function () {
+		sarathiConfig.methods.testParams = sampleMethodParams;
+		loadBalancerModule.getLoadBalancer = loadBalancer;
+
+		var sarathi = new SarathiClient(sarathiConfig);
+		sarathi.testParams().then(function () {
+			var args = dummyRequest.refFun.args[0];
+			args[0][0].should.be.eql({
+				url: "prefix:url1",
+				method: "GET",
+				headers: {
+					"content-type": 'application/json',
+					accept: 'application/json',
+					param1: "value1"
+				},
+				qs: {
+					a: "b"
+				},
+				body: "{'some': 1}",
+				timeout: 2000
+			});
+			done();
+		});
+	});
+
+	it("should pass all provided parameters to http call, should accept body of type Object", function (done) {
 		var tempBody = sampleMethodParams.body;
 		sampleMethodParams.body = {"some": 1};
 
@@ -170,6 +195,37 @@ describe("SarathiClient", function () {
 				},
 				json: true,
 				body: {"some": 1},
+				timeout: 2000
+			});
+			sampleMethodParams.body = tempBody;
+			done();
+		});
+	});
+
+	it("should pass all provided parameters to http call, should accept body of type Array", function (done) {
+		var tempBody = sampleMethodParams.body;
+		sampleMethodParams.body = [{"some": 1}];
+
+		sarathiConfig.methods.testParams = sampleMethodParams;
+		loadBalancerModule.getLoadBalancer = loadBalancer;
+
+		var sarathi = new SarathiClient(sarathiConfig);
+
+		sarathi.testParams(function () {
+			var args = dummyRequest.refFun.args[0];
+			args[0][0].should.be.eql({
+				url: "prefix:url1",
+				method: "GET",
+				headers: {
+					"content-type": 'application/json',
+					accept: 'application/json',
+					param1: "value1"
+				},
+				qs: {
+					a: "b"
+				},
+				json: true,
+				body: [{"some": 1}],
 				timeout: 2000
 			});
 			sampleMethodParams.body = tempBody;
@@ -208,10 +264,10 @@ describe("SarathiClient", function () {
 		});
 	});
 
-	it("should pass all provided parameters to http call, override with runtime params", function (done) {
+	it("should handle and propagate failures in from discovery", function (done) {
 		var origImpl = discoveryStrategy.discoveryDone;
 		discoveryStrategy.discoveryDone = function (c, callback) {
-			return callback(new Error("Somethings gotta give"));
+			return callback(new Error("Something's gotta give"));
 		};
 
 		sarathiConfig.methods.testParams = sampleMethodParams;
@@ -222,10 +278,30 @@ describe("SarathiClient", function () {
 		sarathi.testParams(function (err, res, body) {
 			err.should.be.ok;
 			err.should.be.an.instanceOf(Error);
-			err.message.should.be.eql("Somethings gotta give");
+			err.message.should.be.eql("Something's gotta give");
 			discoveryStrategy.discoveryDone = origImpl;
 			done();
 		});
+	});
+
+	it("should handle and propagate failures in from discovery, only when there are no nodes to use.", function () {
+		// var origImpl = discoveryStrategy.discoveryDone;
+		// discoveryStrategy.discoveryDone = function (c, callback) {
+		// 	return callback(new Error("Something's gotta give"));
+		// };
+        //
+		// sarathiConfig.methods.testParams = sampleMethodParams;
+		// loadBalancerModule.getLoadBalancer = loadBalancer;
+        //
+		// var sarathi = new SarathiClient(sarathiConfig);
+        //
+		// sarathi.testParams(function (err, res, body) {
+		// 	err.should.be.ok;
+		// 	err.should.be.an.instanceOf(Error);
+		// 	err.message.should.be.eql("Something's gotta give");
+		// 	discoveryStrategy.discoveryDone = origImpl;
+		// 	done();
+		// });
 	});
 
 	it("should retry till retry count, when error occurs", function (done) {
@@ -233,6 +309,20 @@ describe("SarathiClient", function () {
 		var sarathi = new SarathiClient(sarathiConfig);
 
 		sarathi.testParams(function (err, res, body) {
+			dummyRequest.refFun.calledThrice.should.be.true;
+			err.should.be.ok;
+			err.should.be.an.instanceOf(Error);
+			err.message.should.be.eql("failure in request.");
+			requestError = undefined;
+			done();
+		});
+	});
+
+	it("should retry till retry count, when error occurs, should return a promise and reject for error", function () {
+		requestError = new Error("failure in request.");
+		var sarathi = new SarathiClient(sarathiConfig);
+
+		sarathi.testParams().then(_.noop, function (err) {
 			dummyRequest.refFun.calledThrice.should.be.true;
 			err.should.be.ok;
 			err.should.be.an.instanceOf(Error);
