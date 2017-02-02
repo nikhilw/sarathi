@@ -217,8 +217,33 @@ builds the configuration provided and returns the restClient.
 Methods added on the client return promises which can be used instead of passing callback to the method.
 
 ## Using Sarathi with hystrixjs
-Coming soon.
+~~Coming soon.~~ Its here!! Now that methods return promise, just use as described in [hystrixjs](https://www.npmjs.com/package/hystrixjs) documentation.
+```javascript
+var CommandsFactory = require('hystrixjs').commandFactory;
 
+var serviceCommand = CommandsFactory.getOrCreate("Service on port :" + service.port + ":" + port)
+    .circuitBreakerErrorThresholdPercentage(service.errorThreshold)
+    .timeout(service.timeout)
+    .run(client.getUsers) // This is where the call is
+    .circuitBreakerRequestVolumeThreshold(service.concurrency)
+    .circuitBreakerSleepWindowInMilliseconds(service.timeout)
+    .statisticalWindowLength(10000)
+    .statisticalWindowNumberOfBuckets(10)
+    .errorHandler(isErrorHandler)
+    .build();
+
+serviceCommand.execute(); // Trigger the API
+```
+
+### Passing params when using hystrix
+```javascript
+...
+.run(function(options) {
+  return client.getUser(options);
+})
+...
+serviceCommand.execute({placeholders: {id: 1}, headers: {"content-type": "application/xml"}});
+```
 
 ## Sarathi, the name
 Pronounce it as /sa:raθiː/, it is a _noun_. It simply means: a charioteer. A sarathi controls the chariot, chooses the best route and navigates it. According to Hindu mythology, it also is an epithet of Krishna, an Avatar of Vishnu, who played the role of Arjun's charioteer, in the great war of Mahabharata and led him to victory.   
