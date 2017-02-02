@@ -25,15 +25,24 @@ function methodBuilder(methodOptions, restClientConfig, _instanceState) {
 				var effectiveMethodOptions = _.merge({}, cleanedUpMethodOptions, optionOverrides || {});
 				// console.log("effective: ", effectiveMethodOptions);
 				invokeEndpoint(restClientConfig.retry, responseObject, effectiveMethodOptions, _instanceState, restClientConfig, function() {
-					// console.log("got response: " + responseObject);
-					return resolve(responseObject.error, responseObject.response, responseObject.body);
+					// console.log("got response: ", responseObject.error, responseObject.body);
+					if (responseObject.error) {
+						console.log("Giving up retries, declaring a failure.", responseObject.error.message);
+						return reject(responseObject.error);
+					}
+					return resolve(responseObject);
 				});
-			}, function(err) {
+			}, function(err) { //TODO: should it fail when there are nodes the client can still use?
 				return reject(err);
 			});
 		});
 
-        promise.done(callback, callback);
+		if (_.isFunction(callback)) {
+			promise.done(function (responseObject) {
+				// console.log(arguments);
+				return callback(responseObject.error, responseObject.response, responseObject.body);
+			}, callback);
+		}
         return promise;
     };
 }
