@@ -39,7 +39,7 @@ function methodBuilder(methodOptions, restClientConfig, _instanceState) {
 
 		if (_.isFunction(callback)) {
 			promise.done(function (responseObject) {
-				// console.log(arguments);
+				// console.log(arguments); //TODO: Breaking change, remove error param in success hangler.
 				return callback(responseObject.error, responseObject.response, responseObject.body);
 			}, callback);
 		}
@@ -59,15 +59,12 @@ function invokeEndpoint(retryCount, responseObject, methodOptions, _instanceStat
 	url = url.replace(/([^:]\/)\/+/g, "$1");
     url = format(url, methodOptions.placeholders);
 
-	var requestOptions = {
-        // url: config.strategy.getNextNode().url + methodOptions.url,
-        url: url,
-        method: methodOptions.httpMethod || "GET",
-        headers: methodOptions.headers,
-        qs: methodOptions.queryParams,
-        body: methodOptions.body,
-        timeout: restClientConfig.timeout // TODO: option
-    };
+	var requestOptions = _.merge({}, methodOptions); // TODO: Breaking change: Remove redundant params.
+	requestOptions.url = url;
+	requestOptions.method = requestOptions.httpMethod || requestOptions.method || "GET";
+	requestOptions.qs = requestOptions.queryParams || requestOptions.qs;
+	requestOptions.timeout = restClientConfig.timeout || requestOptions.timeout; // TODO: option
+
 	massageBody(requestOptions);
 	// console.log(requestOptions);
 

@@ -17,6 +17,7 @@ npm install --save sarathi
 * **Declarative** methods and endpoints mappings
 * Invocation time overrides to reuse method calls
 * Instantiate with a single object or using a **fluent API**.
+* Wraps the most popular http client, [request](https://www.npmjs.com/package/request), supports all params transparently.
 * Unicorns
 
 ## Usage
@@ -54,8 +55,9 @@ client.getUsers(function(error, response, body) {
 
 #### Simple with promises
 ```javascript
-client.getUsers().then(function(error, response, body) {
-	console.log(body);
+client.getUsers().then(function(responseObject) {
+    console.log(responseObject.response); // Entire http response object
+    console.log(responseObject.body);
 }, function(err) {
     console.log(err);
 })
@@ -93,7 +95,7 @@ client.getUsers({httpMethod: "POST", body: '{"v": "some body"}' }, function(erro
 Please return when you are sober ;)
 ```
 
-#### Options
+## Options
 **NOTE: [API](#API) is much more fun**
 
 * methods: ```Object``` declaring method name, endpoint they refer to, http method etc.
@@ -101,28 +103,27 @@ Please return when you are sober ;)
 * discoveryStrategy: ```Object``` Instance of service discovery strategy
 * restClient: ```Object``` Rest client configuration
 
-#### methods
-Object of method description objects. Key of the object is your method name: Ex: getUsers
+### methods
+Object of method description objects. Key of the object is your method name: Ex: getUsers and value as describe below. Apart from parameters mentioned below any additional parameters supported by the [request](https://www.npmjs.com/package/request) client should also work (not all tested) as Sarathi transparently forwards them to request module internally. 
 
 * url: ```String``` Corresponding http endpoint, can have placeholders. Ex: /users OR /users/{id}
-* httpMethod: ```String``` HTTP method, Ex: "GET"
+* httpMethod || method: ```String``` HTTP method, Ex: "GET"
 * placeholders: ```Object``` a map of values to resolve placeholders, should ideally be passed while invoking the method instead. Ex: {id: 1}
-* queryParams: ```Object``` all attributes of this object are passed as query parameters. Ex: {a: 1, b: 2} becomes: ?a=1&b=2
+* queryParams || qs: ```Object``` all attributes of this object are passed as query parameters. Ex: {a: 1, b: 2} becomes: ?a=1&b=2
 * headers: ```Object``` any headers you might want to set. By default: {"content-type": "application/json", "accept": "application/json"} are always set, which can be overridden. 
 * body: ```String|Object``` for POST/PUT requests.
 
-#### loadBalancer
+### loadBalancer
 * strategy: ```String``` Possible values, Ex: "round-robin"
   1. round-robin: once each on the disovered instances
   2. random: at random
   3. disabled: load balancing will be disabled, the first instance returned by the discovery will always be used. This allows for server-side load balancing.
 
-
-#### discovery
+### discovery
 * discoveryStrategy: ```Object``` Instance of [sarathi-discovery-strategy](https://www.npmjs.com/package/sarathi-discovery-strategy), currently available implementations: [nodiscovery](https://www.npmjs.com/package/sarathi-nodiscovery-strategy) (when no discovery server), [consul.io](https://www.npmjs.com/package/sarathi-consul-strategy)
 
 
-#### restClient
+### restClient
 * retry: ```number``` Number of times to retry when error occurs in a REST call. If load balancing is enabled, the load balancing strategy decides where the next call will go to. Total calls triggered in worst case will be 1 + retry.
 * timeout: ```number``` in ms. Timeout for rest calls.
 
@@ -147,9 +148,9 @@ Object of method description objects. Key of the object is your method name: Ex:
 ```javascript
 {
 	"url": undefined,
-	"httpMethod": "GET",
+	"method": "GET",
     "placeholders": {},
-    "queryParams": {},
+    "qs": {}, //query params
     "headers": {
 		"content-type": "application/json",
 		"accept": "application/json"
