@@ -1,6 +1,6 @@
 {
   "name": "sarathi",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Service discovery aware, declarative rest client with client side load balancing",
   "main": "index.js",
   "scripts": {
