@@ -136,6 +136,11 @@ describe("SarathiClient", function () {
 					accept: 'application/json',
 					param1: "value1"
 				},
+				httpMethod: "GET",
+				placeholders: {},
+				queryParams: {
+					a: "b"
+				},
 				qs: {
 					a: "b"
 				},
@@ -160,6 +165,11 @@ describe("SarathiClient", function () {
 					"content-type": 'application/json',
 					accept: 'application/json',
 					param1: "value1"
+				},
+				httpMethod: "GET",
+				placeholders: {},
+				queryParams: {
+					a: "b"
 				},
 				qs: {
 					a: "b"
@@ -189,6 +199,11 @@ describe("SarathiClient", function () {
 					"content-type": 'application/json',
 					accept: 'application/json',
 					param1: "value1"
+				},
+				httpMethod: "GET",
+				placeholders: {},
+				queryParams: {
+					a: "b"
 				},
 				qs: {
 					a: "b"
@@ -220,6 +235,11 @@ describe("SarathiClient", function () {
 					"content-type": 'application/json',
 					accept: 'application/json',
 					param1: "value1"
+				},
+				httpMethod: "GET",
+				placeholders: {},
+				queryParams: {
+					a: "b"
 				},
 				qs: {
 					a: "b"
@@ -253,6 +273,11 @@ describe("SarathiClient", function () {
 					"content-type": "application/xml",
 					accept: 'application/json',
 					param1: "value1"
+				},
+				httpMethod: "POST",
+				placeholders: {},
+				queryParams: {
+					a: "b"
 				},
 				qs: {
 					a: "b"
